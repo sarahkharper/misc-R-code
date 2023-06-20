@@ -1,0 +1,30 @@
+artic_seg_comparison_within$SPEAR.EST = as.numeric(artic_seg_comparison_within$SPEAR.EST)
+artic_seg_comparison_fortable = subset(artic_seg_comparison_within_full, select = c(DIMENSION, SEG1, SEG2, SPEAR.EST))
+artic_seg_comparison_within_fortable_wide = artic_seg_comparison_fortable %>% pivot_wider(names_from = c(SEG2), values_from = c(SPEAR.EST))
+#artic_seg_comparison_within_fortable_wide %<>% mutate_if(is.numeric, round, 3)
+artic_seg_comparison_within_fortable_wide$DIMENSION <- as.factor(artic_seg_comparison_within_fortable_wide$DIMENSION)
+levels(artic_seg_comparison_within_fortable_wide$DIMENSION) <- c("A12", "LA", "LP", "CD", "CL") #c("M1", "F1", "F2", "F2-F1", "F3", "F4", "M3", "M4", "M2")
+artic_seg_comparison_within_fortable_wide$SEG1 <- as.factor(artic_seg_comparison_within_fortable_wide$SEG1)
+levels(artic_seg_comparison_within_fortable_wide$SEG1) <- c("/l/", "/ɹ/", "/s/", "/ʃ/", "/t/") #c("M1", "F1", "F2", "F2-F1", "F3", "F4", "M3", "M4", "M2")
+artic_seg_comparison_within_fortable_wide %<>% mutate(SEG1 = factor(SEG1, levels = c("/t/", "/s/", "/ʃ/", "/l/", "/ɹ/"))) %>% arrange(SEG1) #c("M1", "M2","M3", "M4", "F1", "F2","F3", "F4","F2-F1")
+artic_seg_comparison_within_fortable_wide %<>% mutate(DIMENSION = factor(DIMENSION, levels = c("CL", "CD", "A12", "LA", "LP"))) %>% arrange(DIMENSION) #c("M1", "M2","M3", "M4", "F1", "F2","F3", "F4","F2-F1")
+#artic_seg_comparison_within_fortable_wide %<>% arrange(MODEL)
+artic_seg_comparison_within_fortable_wide <- artic_seg_comparison_within_fortable_wide[,c(1,2,3,7,4,5,6)]
+nm <- names(artic_seg_comparison_within_fortable_wide)
+typology8 <- data.frame(
+  col_keys = c(nm[3:length(nm)]),
+  factor = c("/t/", "/s/","/ʃ/", "/l/", "/ɹ/"),
+  #stat = c("𝝆", "p", "q", "𝝆", "p", "q", "𝝆", "p", "q","𝝆", "p", "q"),
+  stringsAsFactors = FALSE)
+artic_seg_comparison_within_table <- flextable(artic_seg_comparison_within_fortable_wide)
+artic_seg_comparison_within_table <- merge_v(artic_seg_comparison_within_table, j = 1)
+artic_seg_comparison_within_table <- set_header_df(artic_seg_comparison_within_table, mapping = typology8, key = "col_keys")
+artic_seg_comparison_within_table <- merge_h(artic_seg_comparison_within_table, part = "header")
+artic_seg_comparison_within_table <- theme_booktabs(artic_seg_comparison_within_table)
+artic_seg_comparison_within_table <- fix_border_issues(artic_seg_comparison_within_table)
+artic_seg_comparison_within_table <- align(artic_seg_comparison_within_table, align = "center", part = "header")
+artic_seg_comparison_within_table <- hline(artic_seg_comparison_within_table, i = c(5,10,15,20), border = fp_border(color = "black", style = "dashed", width = 1.5))
+artic_seg_comparison_within_table <- align(artic_seg_comparison_within_table, align = "center", part = "body")
+#artic_seg_comparison_within_table <- vline(artic_seg_comparison_within_table, j = c(4,7,10,13), border = fp_border(color = "black", style = "dotted", width = 1.5))
+artic_seg_comparison_within_table <- colformat_num(artic_seg_comparison_within_table, j = c(3:7), na_str = "", digits = 3)
+artic_seg_comparison_within_table <- fit_to_width(artic_seg_comparison_within_table, 7.5)
