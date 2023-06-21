@@ -1,2 +1,2 @@
 # sharper_code
- Code from various projects
+ R code from various projects for data wrangling and statistical analysis
